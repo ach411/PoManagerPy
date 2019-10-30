@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% load humanize %}
+{% load static %}
+
+{% block title %} {{ block.super }} - PO Item Query View{% endblock %}
+
+{% block body %}
+
+<h2>{{ query_description }}</h2>
+<h4>Between {{ minDate|date:"F j, Y" }} and {{ maxDate|date:"F j, Y" }}</h4>
+	<p>
+		<table id="sortable" class="table table-bordered table-hover tablesorter">
+			<thead>
+				<tr>
+					<th>Po #</th>
+					<th>Release #</th>
+					<th>Line #</th>
+					<th>P/N</th>
+					<th>Cust. P/N</th>
+					<th>Description</th>
+					<th>Price</th>
+					<th>Qty shipped</th>
+					<th>Total</th>
+					<th>Currency</th>
+					<th>Due date</th>
+					<th>Comment</th>
+					<th>Status</th>
+					<th>Po File</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in poitem_list %}
+				<tr>
+					<td>{{ item.po.num }}</td>
+					<td>{{ item.po.rel_num }}</td>
+					<td>{{ item.line_num }}</td>
+					<td>{{ item.revision.product.pn }}</td>
+					<td>{{ item.revision.product.cust_pn }}</td>
+					<td>{{ item.description }}</td>
+                    <td>{{ item.price.price }}</td>
+					<td>{{ item.shipped_qty }} / {{ item.qty }}</td>
+                    <td>{{ item.extended_price|intcomma }}</td>
+					<td>{{ item.price.currency.tla }}</td>
+					<td>{{ item.due_date|date:'Y-m-d' }}</td>
+					<td>{{ item.comment|default_if_none:"" }}</td>
+					<td>{{ item.status.name }}</td>
+					<td><a href="po_files_path/item.po.filePath">{{item.po.filepath}}</a></td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+        {% include "pomanager/xls_button.html" %}
+	</p>
+
+<script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
+<script src="{% static 'js/jquery.tablesorter.min.js' %}"></script>
+<script src="{% static 'js/enablesorting.js' %}"></script>
+
+{% endblock %}
